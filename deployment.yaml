@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elasticsearch-spring-boot-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elasticsearch-spring-boot
+  template:
+    metadata:
+      labels:
+        app: elasticsearch-spring-boot
+    spec:
+      containers:
+        - name: elasticsearch-spring-boot
+          image: elasticsearch-spring-boot:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:elasticsearch://localhost:9200"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-spring-boot-service
+spec:
+  selector:
+    app: elasticsearch-spring-boot
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
